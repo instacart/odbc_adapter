@@ -1,5 +1,5 @@
 require 'active_record'
-require 'arel/visitors/bind_visitor'
+require 'arel/visitors/bind_visitor' if Arel::VERSION.to_i < 9
 require 'odbc'
 
 require 'odbc_adapter/database_limits'
