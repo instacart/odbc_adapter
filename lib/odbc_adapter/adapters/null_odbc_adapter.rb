@@ -5,7 +5,7 @@ module ODBCAdapter
     # have an explicit adapter.
     class NullODBCAdapter < ActiveRecord::ConnectionAdapters::ODBCAdapter
       class BindSubstitution < Arel::Visitors::ToSql
-        include Arel::Visitors::BindVisitor
+        include Arel::Visitors::BindVisitor if Arel::VERSION.to_i < 9
       end
 
       # Using a BindVisitor so that the SQL string gets substituted before it is
