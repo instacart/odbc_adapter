@@ -195,9 +195,9 @@ module ActiveRecord
         error_number = exception.message[/^\d+/].to_i
 
         if error_number == ERR_DUPLICATE_KEY_VALUE
-          ActiveRecord::RecordNotUnique.new(message, exception)
+          ActiveRecord::RecordNotUnique.new(message)
         elsif error_number == ERR_QUERY_TIMED_OUT || exception.message =~ ERR_QUERY_TIMED_OUT_MESSAGE
-          ::ODBCAdapter::QueryTimeoutError.new(message, exception)
+          ::ODBCAdapter::QueryTimeoutError.new(message)
         else
           super
         end
