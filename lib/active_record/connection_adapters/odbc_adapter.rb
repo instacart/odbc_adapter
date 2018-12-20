@@ -42,14 +42,14 @@ module ActiveRecord
         password   = config[:password] ? config[:password].to_s : nil
 
         # If it includes only the DSN + credentials
-        if (config.keys - [:adapter, :dsn, :username, :password]).empty?
+        if (config.keys - %i[adapter dsn username password]).empty?
           connection = ODBC.connect(config[:dsn], username, password)
           config = config.merge(username: username, password: password)
         # Support additional overrides, e.g. host: db.example.com
         else
           driver_attrs = config.dup
-            .delete_if { |k, v| [:adapter, :username, :password].include?(k) }
-            .merge(UID: username, PWD: password)
+                               .delete_if { |k, _| %i[adapter username password].include?(k) }
+                               .merge(UID: username, PWD: password)
 
           driver, connection = obdc_driver_connection(driver_attrs)
           config = config.merge(driver: driver)
@@ -70,9 +70,9 @@ module ActiveRecord
       end
 
       def obdc_driver_connection(driver_attrs)
-        driver = ODBC::Driver.new.tap do |driver|
-          driver.name = 'odbc'
-          driver.attrs = driver_attrs.stringify_keys
+        driver = ODBC::Driver.new.tap do |dvr|
+          dvr.name = 'odbc'
+          dvr.attrs = driver_attrs.stringify_keys
         end
 
         connection = ODBC::Database.new.drvconnect(driver)
@@ -153,6 +153,7 @@ module ActiveRecord
       def new_column(name, default, sql_type_metadata, null, table_name, default_function = nil, collation = nil, native_type = nil)
         ::ODBCAdapter::Column.new(name, default, sql_type_metadata, null, table_name, default_function, collation, native_type)
       end
+      # rubocop:enable Metrics/ParameterLists
 
       protected
 

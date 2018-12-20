@@ -1,4 +1,4 @@
-require "odbc_adapter/adapters/postgresql_odbc_adapter"
+require 'odbc_adapter/adapters/postgresql_odbc_adapter'
 
 module ODBCAdapter
   module Adapters
@@ -22,12 +22,12 @@ module ODBCAdapter
       def dbms_type_cast(columns, values)
         int_column = {}
         columns.each_with_index do |c, i|
-          int_column[i] = c.type == 3 && c.scale == 0
+          int_column[i] = c.type == 3 && c.scale.zero?
         end
 
         float_column = {}
         columns.each_with_index do |c, i|
-          float_column[i] = c.type == 3 && c.scale != 0
+          float_column[i] = c.type == 3 && !c.scale.zero?
         end
 
         values.each do |row|
