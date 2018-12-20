@@ -70,10 +70,9 @@ module ActiveRecord
       end
 
       def obdc_driver_connection(driver_attrs)
-        driver = ODBC::Driver.new.tap do |dvr|
-          dvr.name = 'odbc'
-          dvr.attrs = driver_attrs.stringify_keys
-        end
+        driver = ODBC::Driver.new
+        driver.name = 'odbc'
+        driver.attrs = driver_attrs.stringify_keys
 
         connection = ODBC::Database.new.drvconnect(driver)
 
