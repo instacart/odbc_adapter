@@ -9,7 +9,6 @@ class ConnectionStringTest < Minitest::Test
   def test_odbc_conn_str_connection_with_equals
     conn_str = 'Foo=Bar;Foo2=Something=with=equals'
 
-    odbc_driver_attrs = {}
     odbc_driver_instance_mock = Minitest::Mock.new
     odbc_database_instance_mock = Minitest::Mock.new
     odbc_connection_instance_mock = Minitest::Mock.new
@@ -17,8 +16,6 @@ class ConnectionStringTest < Minitest::Test
     # Setup ODBC::Driver instance mocks
     odbc_driver_instance_mock.expect(:name=, nil, ['odbc'])
     odbc_driver_instance_mock.expect(:attrs=, nil, [{ 'Foo' => 'Bar', 'Foo2' => 'Something=with=equals' }])
-    odbc_driver_instance_mock.expect(:attrs, odbc_driver_attrs)
-    odbc_driver_instance_mock.expect(:attrs, odbc_driver_attrs) # must be called twice
 
     # Setup ODBC::Database instance mocks
     odbc_database_instance_mock.expect(:drvconnect, odbc_connection_instance_mock, [odbc_driver_instance_mock])
@@ -31,10 +28,6 @@ class ConnectionStringTest < Minitest::Test
         ActiveRecord::Base.__send__(:odbc_conn_str_connection, conn_str: conn_str)
       end
     end
-
-    # Assert we set up the driver properly
-    assert_equal odbc_driver_attrs['Foo'], 'Bar'
-    assert_equal odbc_driver_attrs['Foo2'], 'Something=with=equals'
 
     # make sure we called the methods we expected
     odbc_driver_instance_mock.verify
@@ -47,7 +40,6 @@ class ConnectionStringTest < Minitest::Test
   def test_odbc_conn_str_connection_without_equals
     conn_str = 'Foo=Bar;Foo2=Something without equals'
 
-    odbc_driver_attrs = {}
     odbc_driver_instance_mock = Minitest::Mock.new
     odbc_database_instance_mock = Minitest::Mock.new
     odbc_connection_instance_mock = Minitest::Mock.new
@@ -55,8 +47,6 @@ class ConnectionStringTest < Minitest::Test
     # Setup ODBC::Driver instance mocks
     odbc_driver_instance_mock.expect(:name=, nil, ['odbc'])
     odbc_driver_instance_mock.expect(:attrs=, nil, [{ 'Foo' => 'Bar', 'Foo2' => 'Something without equals' }])
-    odbc_driver_instance_mock.expect(:attrs, odbc_driver_attrs)
-    odbc_driver_instance_mock.expect(:attrs, odbc_driver_attrs) # must be called twice
 
     # Setup ODBC::Database instance mocks
     odbc_database_instance_mock.expect(:drvconnect, odbc_connection_instance_mock, [odbc_driver_instance_mock])
@@ -69,10 +59,6 @@ class ConnectionStringTest < Minitest::Test
         ActiveRecord::Base.__send__(:odbc_conn_str_connection, conn_str: conn_str)
       end
     end
-
-    # Assert we set up the driver properly
-    assert_equal odbc_driver_attrs['Foo'], 'Bar'
-    assert_equal odbc_driver_attrs['Foo2'], 'Something without equals'
 
     # make sure we called the methods we expected
     odbc_driver_instance_mock.verify
