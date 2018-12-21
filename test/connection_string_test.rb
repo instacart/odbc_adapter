@@ -16,7 +16,7 @@ class ConnectionStringTest < Minitest::Test
 
     # Setup ODBC::Driver instance mocks
     odbc_driver_instance_mock.expect(:name=, nil, ['odbc'])
-    odbc_driver_instance_mock.expect(:attrs=, nil, [{}])
+    odbc_driver_instance_mock.expect(:attrs=, nil, [{ 'Foo' => 'Bar', 'Foo2' => 'Something=with=equals' }])
     odbc_driver_instance_mock.expect(:attrs, odbc_driver_attrs)
     odbc_driver_instance_mock.expect(:attrs, odbc_driver_attrs) # must be called twice
 
@@ -54,7 +54,7 @@ class ConnectionStringTest < Minitest::Test
 
     # Setup ODBC::Driver instance mocks
     odbc_driver_instance_mock.expect(:name=, nil, ['odbc'])
-    odbc_driver_instance_mock.expect(:attrs=, nil, [{}])
+    odbc_driver_instance_mock.expect(:attrs=, nil, [{ 'Foo' => 'Bar', 'Foo2' => 'Something without equals' }])
     odbc_driver_instance_mock.expect(:attrs, odbc_driver_attrs)
     odbc_driver_instance_mock.expect(:attrs, odbc_driver_attrs) # must be called twice
 
