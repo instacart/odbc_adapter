@@ -8,7 +8,7 @@ task :rubocop do
 
   RuboCop::RakeTask.new do |task|
     task.patterns = ['lib/**/*.rb']
-    task.formatters = ['files']
+    task.formatters = ['simple']
   end
 end
 
