@@ -1,17 +1,23 @@
-# ODBCAdapter
-
-[![License][license-badge]][license-link]
+# ODBCAdapter [![License][license-badge]][license-link]
 
 | ActiveRecord | Gem Version | Branch | Status |
 |--------------|-------------|--------|--------|
 | `5.x`        | `~> '5.0'`  | [`master`][5.x-branch] | [![Build Status][5.x-build-badge]][build-link] |
 | `4.x`        | `~> '4.0'`  | [`4.2.x`][4.x-branch]  | [![Build Status][4.x-build-badge]][build-link] |
 
-This adapter will work for basic queries for most DBMSs out of the box, without support for migrations. Full support is built-in for MySQL 5 and PostgreSQL 9 databases. You can register your own adapter to get more support for your DBMS using the `ODBCAdapter.register` function.
+## Supported Databases
+
+- PostgreSQL 9
+- MySQL 5
+- Snowflake
+
+You can also register your own adapter to get more support for your DBMS
+`ODBCAdapter.register`.
 
 ## Installation
 
-Ensure you have the ODBC driver installed on your machine. You will also need the driver for whichever database to which you want ODBC to connect.
+Ensure you have the ODBC driver installed on your machine. You will also need
+the driver for whichever database to which you want ODBC to connect.
 
 Add this line to your application's Gemfile:
 
@@ -29,7 +35,8 @@ Or install it yourself as:
 
 ## Usage
 
-Configure your `database.yml` by either using the `dsn` option to point to a DSN that corresponds to a valid entry in your `~/.odbc.ini` file:
+Configure your `database.yml` by either using the `dsn` option to point to a DSN
+that corresponds to a valid entry in your `~/.odbc.ini` file:
 
 ```yml
 development:
@@ -45,7 +52,26 @@ development:
   conn_str: "DRIVER={PostgreSQL ANSI};SERVER=localhost;PORT=5432;DATABASE=my_database;UID=postgres;"
 ```
 
-ActiveRecord models that use this connection will now be connecting to the configured database using the ODBC driver.
+ActiveRecord models that use this connection will now be connecting to the
+configured database using the ODBC driver.
+
+### Extending
+
+Configure your own adapter by registering it in your application's bootstrap
+process. For example, you could add the following to a Rails application via
+`config/initializers/custom_database_adapter.rb`
+
+```ruby
+ODBCAdapter.register(/custom/, ActiveRecord::ConnectionAdapters::ODBCAdapter) do
+  # Overrides
+end
+```
+
+```yml
+development:
+  adapter: odbc
+  dsn: CustomDB
+```
 
 ## Testing
 
