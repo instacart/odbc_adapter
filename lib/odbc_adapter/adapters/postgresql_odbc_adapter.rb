@@ -17,7 +17,7 @@ module ODBCAdapter
         Arel::Visitors::PostgreSQL.new(self)
       end
 
-      # Explicitly disable prepared statements for now, as it's always erroring 
+      # Explicitly disable prepared statements for now, as it's always erroring
       # out with:
       #   ODBC::Error: INTERN (0) [RubyODBC]Too much parameters
       def prepared_statements
