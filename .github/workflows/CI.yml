@@ -4,10 +4,61 @@ on:
   push:
     branches:
       - master
-      - github_actions
   pull_request:
 
 jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby:
+          - "3.3"
+          - "3.4"
+        activerecord:
+          - "6.1"
+    continue-on-error: ${{ matrix.ruby == 'head' || matrix.activerecord == 'head' }}
+    name: Ruby ${{ matrix.ruby }} / ActiveRecord ${{ matrix.activerecord }}
+    services:
+      postgres:
+        image: postgres
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_HOST_AUTH_METHOD: trust
+          POSTGRES_DB: odbc_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      RAILS_VERSION: ${{ matrix.activerecord }}
+      CONN_STR: 'DRIVER={PostgreSQL ANSI};SERVER=localhost;PORT=5432;DATABASE=odbc_test;UID=postgres;'
+      PGHOST: localhost
+      PGUSER: postgres
+      RAILS_ENV: test
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Apt Packages
+        run: >
+          sudo apt-get install
+          unixodbc
+          unixodbc-dev
+          odbc-postgresql
+          odbcinst
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+      - name: Setup PostgreSQL
+        run: |
+          sudo odbcinst -j
+          sudo cat /usr/share/psqlodbc/odbcinst.ini.template
+          sudo odbcinst -i -d -f /usr/share/psqlodbc/odbcinst.ini.template
+      - run: |
+          bundle exec rake test
   RuboCop:
     runs-on: ubuntu-latest
     steps:
