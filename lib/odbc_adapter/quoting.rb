@@ -10,7 +10,7 @@ module ODBCAdapter
       name = name.to_s
       quote_char = database_metadata.identifier_quote_char.to_s.strip
 
-      return name if quote_char.length.zero?
+      return name if quote_char.empty?
       quote_char = quote_char[0]
 
       # Avoid quoting any already quoted name

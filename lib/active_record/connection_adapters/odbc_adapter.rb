@@ -39,8 +39,8 @@ module ActiveRecord
 
       # Connect using a predefined DSN.
       def odbc_dsn_connection(config)
-        username   = config[:username] ? config[:username].to_s : nil
-        password   = config[:password] ? config[:password].to_s : nil
+        username   = config[:username]&.to_s
+        password   = config[:password]&.to_s
 
         # If it includes only the DSN + credentials
         if (config.keys - %i[adapter dsn username password]).empty?

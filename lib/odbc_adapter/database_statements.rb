@@ -118,7 +118,7 @@ module ODBCAdapter
 
     # Assume column is nullable if nullable == SQL_NULLABLE_UNKNOWN
     def nullability(col_name, is_nullable, nullable)
-      not_nullable = (!is_nullable || !nullable.to_s.match('NO').nil?)
+      not_nullable = !is_nullable || !nullable.to_s.match('NO').nil?
       result = !(not_nullable || nullable == SQL_NO_NULLS)
 
       # HACK!

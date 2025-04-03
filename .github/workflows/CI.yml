@@ -11,7 +11,14 @@ jobs:
   RuboCop:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
+      - name: Install Apt Packages
+        run: >
+          sudo apt-get install
+          unixodbc
+          unixodbc-dev
+          odbc-postgresql
+          odbcinst
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ruby
