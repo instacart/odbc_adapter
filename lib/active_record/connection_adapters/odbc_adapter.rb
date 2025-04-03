@@ -149,11 +149,9 @@ module ActiveRecord
 
       # Build a new column object from the given options. Effectively the same
       # as super except that it also passes in the native type.
-      # rubocop:disable Metrics/ParameterLists
-      def new_column(name, default, sql_type_metadata, null, table_name, default_function = nil, collation = nil, native_type = nil)
-        ::ODBCAdapter::Column.new(name, default, sql_type_metadata, null, table_name, default_function, collation, native_type)
+      def new_column(...)
+        ::ODBCAdapter::Column.new(...)
       end
-      # rubocop:enable Metrics/ParameterLists
 
       protected
 
