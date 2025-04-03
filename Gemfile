@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-gem "activerecord", "~> #{ENV.fetch('RAILS_VERSION', '6.1')}.0"
+gem "activerecord", "~> #{ENV.fetch('RAILS_VERSION', '7.0')}.0"
 
 gem "base64"
 gem "bigdecimal"
