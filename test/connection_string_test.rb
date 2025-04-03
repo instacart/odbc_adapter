@@ -1,4 +1,4 @@
-require 'test_helper'
+require "test_helper"
 
 class ConnectionStringTest < Minitest::Test
   def setup; end
@@ -7,15 +7,15 @@ class ConnectionStringTest < Minitest::Test
 
   # Make sure that the connection string is parsed properly when it has an equals sign
   def test_odbc_conn_str_connection_with_equals
-    conn_str = 'Foo=Bar;Foo2=Something=with=equals'
+    conn_str = "Foo=Bar;Foo2=Something=with=equals"
 
     odbc_driver_instance_mock = Minitest::Mock.new
     odbc_database_instance_mock = Minitest::Mock.new
     odbc_connection_instance_mock = Minitest::Mock.new
 
     # Setup ODBC::Driver instance mocks
-    odbc_driver_instance_mock.expect(:name=, nil, ['odbc'])
-    odbc_driver_instance_mock.expect(:attrs=, nil, [{ 'Foo' => 'Bar', 'Foo2' => 'Something=with=equals' }])
+    odbc_driver_instance_mock.expect(:name=, nil, ["odbc"])
+    odbc_driver_instance_mock.expect(:attrs=, nil, [{ "Foo" => "Bar", "Foo2" => "Something=with=equals" }])
 
     # Setup ODBC::Database instance mocks
     odbc_database_instance_mock.expect(:drvconnect, odbc_connection_instance_mock, [odbc_driver_instance_mock])
@@ -38,15 +38,15 @@ class ConnectionStringTest < Minitest::Test
   # Make sure that the connection string is parsed properly when it doesn't have an
   # equals sign
   def test_odbc_conn_str_connection_without_equals
-    conn_str = 'Foo=Bar;Foo2=Something without equals'
+    conn_str = "Foo=Bar;Foo2=Something without equals"
 
     odbc_driver_instance_mock = Minitest::Mock.new
     odbc_database_instance_mock = Minitest::Mock.new
     odbc_connection_instance_mock = Minitest::Mock.new
 
     # Setup ODBC::Driver instance mocks
-    odbc_driver_instance_mock.expect(:name=, nil, ['odbc'])
-    odbc_driver_instance_mock.expect(:attrs=, nil, [{ 'Foo' => 'Bar', 'Foo2' => 'Something without equals' }])
+    odbc_driver_instance_mock.expect(:name=, nil, ["odbc"])
+    odbc_driver_instance_mock.expect(:attrs=, nil, [{ "Foo" => "Bar", "Foo2" => "Something without equals" }])
 
     # Setup ODBC::Database instance mocks
     odbc_database_instance_mock.expect(:drvconnect, odbc_connection_instance_mock, [odbc_driver_instance_mock])

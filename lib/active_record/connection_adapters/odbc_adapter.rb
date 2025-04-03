@@ -1,19 +1,19 @@
-require 'active_record'
+require "active_record"
 # BindVisitor was removed in Arel 9 aka Rails 5.2
-require 'arel/visitors/bind_visitor' if Arel::VERSION.to_i < 9
-require 'odbc'
+require "arel/visitors/bind_visitor" if Arel::VERSION.to_i < 9
+require "odbc"
 
-require 'odbc_adapter/database_limits'
-require 'odbc_adapter/database_statements'
-require 'odbc_adapter/error'
-require 'odbc_adapter/quoting'
-require 'odbc_adapter/schema_statements'
+require "odbc_adapter/database_limits"
+require "odbc_adapter/database_statements"
+require "odbc_adapter/error"
+require "odbc_adapter/quoting"
+require "odbc_adapter/schema_statements"
 
-require 'odbc_adapter/column'
-require 'odbc_adapter/column_metadata'
-require 'odbc_adapter/database_metadata'
-require 'odbc_adapter/registry'
-require 'odbc_adapter/version'
+require "odbc_adapter/column"
+require "odbc_adapter/column_metadata"
+require "odbc_adapter/database_metadata"
+require "odbc_adapter/registry"
+require "odbc_adapter/version"
 
 module ActiveRecord
   class Base
@@ -28,7 +28,7 @@ module ActiveRecord
           elsif config.key?(:conn_str)
             odbc_conn_str_connection(config)
           else
-            raise ArgumentError, 'No data source name (:dsn) or connection string (:conn_str) specified.'
+            raise ArgumentError, "No data source name (:dsn) or connection string (:conn_str) specified."
           end
 
         database_metadata = ::ODBCAdapter::DatabaseMetadata.new(connection)
@@ -64,7 +64,7 @@ module ActiveRecord
       # e.g. "DSN=virt5;UID=rails;PWD=rails"
       #      "DRIVER={OpenLink Virtuoso};HOST=carlmbp;UID=rails;PWD=rails"
       def odbc_conn_str_connection(config)
-        driver_attrs = config[:conn_str].split(';').map { |option| option.split('=', 2) }.to_h
+        driver_attrs = config[:conn_str].split(";").map { |option| option.split("=", 2) }.to_h
         driver, connection = obdc_driver_connection(driver_attrs)
 
         [connection, config.merge(driver: driver)]
@@ -72,7 +72,7 @@ module ActiveRecord
 
       def obdc_driver_connection(driver_attrs)
         driver = ODBC::Driver.new
-        driver.name = 'odbc'
+        driver.name = "odbc"
         driver.attrs = driver_attrs.stringify_keys
 
         connection = ODBC::Database.new.drvconnect(driver)
@@ -89,8 +89,8 @@ module ActiveRecord
       include ::ODBCAdapter::Quoting
       include ::ODBCAdapter::SchemaStatements
 
-      ADAPTER_NAME = 'ODBC'.freeze
-      BOOLEAN_TYPE = 'BOOLEAN'.freeze
+      ADAPTER_NAME = "ODBC".freeze
+      BOOLEAN_TYPE = "BOOLEAN".freeze
 
       ERR_DUPLICATE_KEY_VALUE     = 23_505
       ERR_QUERY_TIMED_OUT         = 57_014
@@ -159,7 +159,7 @@ module ActiveRecord
 
       # Build the type map for ActiveRecord
       def initialize_type_map(map)
-        map.register_type 'boolean',              Type::Boolean.new
+        map.register_type "boolean",              Type::Boolean.new
         map.register_type ODBC::SQL_CHAR,         Type::String.new
         map.register_type ODBC::SQL_LONGVARCHAR,  Type::Text.new
         map.register_type ODBC::SQL_TINYINT,      Type::Integer.new(limit: 4)
@@ -178,7 +178,7 @@ module ActiveRecord
         map.register_type ODBC::SQL_TIMESTAMP,    Type::DateTime.new
         map.register_type ODBC::SQL_GUID,         Type::String.new
 
-        alias_type map, ODBC::SQL_BIT,            'boolean'
+        alias_type map, ODBC::SQL_BIT,            "boolean"
         alias_type map, ODBC::SQL_VARCHAR,        ODBC::SQL_CHAR
         alias_type map, ODBC::SQL_WCHAR,          ODBC::SQL_CHAR
         alias_type map, ODBC::SQL_WVARCHAR,       ODBC::SQL_CHAR

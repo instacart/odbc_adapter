@@ -1,4 +1,4 @@
-require 'odbc_adapter/adapters/postgresql_odbc_adapter'
+require "odbc_adapter/adapters/postgresql_odbc_adapter"
 
 module ODBCAdapter
   module Adapters
@@ -39,7 +39,7 @@ module ODBCAdapter
               elsif float_column[idx]
                 row[idx] = val.to_f
               elsif val.is_a?(String)
-                row[idx] = val.force_encoding('UTF-8')
+                row[idx] = val.force_encoding("UTF-8")
               end
             end
           end

@@ -1,4 +1,4 @@
-require 'test_helper'
+require "test_helper"
 
 # Dummy class for this test
 class ConnectionsTestDummyActiveRecordModel < ActiveRecord::Base
@@ -8,10 +8,10 @@ end
 # This test makes sure that all of the connection methods work properly
 class ConnectionsTest < Minitest::Test
   def setup
-    @options = { adapter: 'odbc' }
-    @options[:conn_str] = ENV['CONN_STR'] if ENV['CONN_STR']
-    @options[:dsn]      = ENV['DSN'] if ENV['DSN']
-    @options[:dsn]      = 'ODBCAdapterPostgreSQLTest' if @options.values_at(:conn_str, :dsn).compact.empty?
+    @options = { adapter: "odbc" }
+    @options[:conn_str] = ENV["CONN_STR"] if ENV["CONN_STR"]
+    @options[:dsn]      = ENV["DSN"] if ENV["DSN"]
+    @options[:dsn]      = "ODBCAdapterPostgreSQLTest" if @options.values_at(:conn_str, :dsn).compact.empty?
 
     ConnectionsTestDummyActiveRecordModel.establish_connection @options
 

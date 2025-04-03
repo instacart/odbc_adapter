@@ -3,14 +3,14 @@ module ODBCAdapter
     # Overrides specific to PostgreSQL. Mostly taken from
     # ActiveRecord::ConnectionAdapters::PostgreSQLAdapter
     class PostgreSQLODBCAdapter < ActiveRecord::ConnectionAdapters::ODBCAdapter
-      BOOLEAN_TYPE = 'bool'.freeze
-      PRIMARY_KEY  = 'SERIAL PRIMARY KEY'.freeze
+      BOOLEAN_TYPE = "bool".freeze
+      PRIMARY_KEY  = "SERIAL PRIMARY KEY".freeze
 
       alias create insert
 
       # Override to handle booleans appropriately
       def native_database_types
-        @native_database_types ||= super.merge(boolean: { name: 'bool' })
+        @native_database_types ||= super.merge(boolean: { name: "bool" })
       end
 
       def arel_visitor
@@ -37,7 +37,7 @@ module ODBCAdapter
       # Returns the sequence name for a table's primary key or some other
       # specified key.
       def default_sequence_name(table_name, pri_key = nil)
-        serial_sequence(table_name, pri_key || 'id').split('.').last
+        serial_sequence(table_name, pri_key || "id").split(".").last
       rescue ActiveRecord::StatementInvalid
         "#{table_name}_#{pri_key || 'id'}_seq"
       end
@@ -57,7 +57,7 @@ module ODBCAdapter
 
         case value
         when String
-          return super unless column.native_type == 'bytea'
+          return super unless column.native_type == "bytea"
           { value: value, format: 1 }
         else
           super
@@ -71,10 +71,10 @@ module ODBCAdapter
       end
 
       def disable_referential_integrity
-        execute(tables.map { |name| "ALTER TABLE #{quote_table_name(name)} DISABLE TRIGGER ALL" }.join(';'))
+        execute(tables.map { |name| "ALTER TABLE #{quote_table_name(name)} DISABLE TRIGGER ALL" }.join(";"))
         yield
       ensure
-        execute(tables.map { |name| "ALTER TABLE #{quote_table_name(name)} ENABLE TRIGGER ALL" }.join(';'))
+        execute(tables.map { |name| "ALTER TABLE #{quote_table_name(name)} ENABLE TRIGGER ALL" }.join(";"))
       end
 
       # Create a new PostgreSQL database. Options include <tt>:owner</tt>,
@@ -86,7 +86,7 @@ module ODBCAdapter
       #   create_database config[:database], config
       #   create_database 'foo_development', encoding: 'unicode'
       def create_database(name, options = {})
-        options = options.reverse_merge(encoding: 'utf8')
+        options = options.reverse_merge(encoding: "utf8")
 
         option_string = options.symbolize_keys.sum do |key, value|
           case key
@@ -101,7 +101,7 @@ module ODBCAdapter
           when :connection_limit
             " CONNECTION LIMIT = #{value}"
           else
-            ''
+            ""
           end
         end
 
@@ -155,7 +155,7 @@ module ODBCAdapter
 
         # Construct a clean list of column names from the ORDER BY clause,
         # removing any ASC/DESC modifiers
-        order_columns = orders.map { |s| s.gsub(/\s+(ASC|DESC)\s*(NULLS\s+(FIRST|LAST)\s*)?/i, '') }
+        order_columns = orders.map { |s| s.gsub(/\s+(ASC|DESC)\s*(NULLS\s+(FIRST|LAST)\s*)?/i, "") }
         order_columns.reject!(&:blank?)
         order_columns = order_columns.zip((0...order_columns.size).to_a).map { |s, i| "#{s} AS alias_#{i}" }
 
@@ -180,14 +180,14 @@ module ODBCAdapter
 
       # Returns the current ID of a table's sequence.
       def last_insert_id(sequence_name)
-        r = exec_query("SELECT currval('#{sequence_name}')", 'SQL')
+        r = exec_query("SELECT currval('#{sequence_name}')", "SQL")
         Integer(r.rows.first.first)
       end
 
       private
 
       def serial_sequence(table, column)
-        result = exec_query(<<-EOSQL, 'SCHEMA')
+        result = exec_query(<<-EOSQL, "SCHEMA")
           SELECT pg_get_serial_sequence('#{table}', '#{column}')
         EOSQL
         result.rows.first.first

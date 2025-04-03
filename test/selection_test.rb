@@ -1,8 +1,8 @@
-require 'test_helper'
+require "test_helper"
 
 class SelectionTest < Minitest::Test
   def test_first
-    assert_equal 'Kevin', User.first.first_name
+    assert_equal "Kevin", User.first.first_name
   end
 
   def test_pluck

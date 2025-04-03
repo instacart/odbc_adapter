@@ -30,7 +30,7 @@ module ODBCAdapter
     # A little bit of metaprogramming magic here to create accessors for each of
     # the fields reported on by the DBMS.
     FIELDS.each do |field|
-      define_method(field.to_s.downcase.gsub('sql_', '')) do
+      define_method(field.to_s.downcase.gsub("sql_", "")) do
         value_for(field)
       end
     end

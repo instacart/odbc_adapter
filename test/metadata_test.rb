@@ -1,4 +1,4 @@
-require 'test_helper'
+require "test_helper"
 
 class MetadataTest < Minitest::Test
   def test_data_sources
@@ -11,6 +11,6 @@ class MetadataTest < Minitest::Test
   end
 
   def test_primary_key
-    assert_equal 'id', User.connection.primary_key('users')
+    assert_equal "id", User.connection.primary_key("users")
   end
 end

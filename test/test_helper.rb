@@ -1,17 +1,17 @@
-require 'simplecov'
+require "simplecov"
 SimpleCov.start
 
-$LOAD_PATH.unshift File.expand_path('../lib', __dir__)
-require 'odbc_adapter'
+$LOAD_PATH.unshift File.expand_path("../lib", __dir__)
+require "odbc_adapter"
 
-require 'minitest/autorun'
-require 'minitest/mock'
-require 'pry'
+require "minitest/autorun"
+require "minitest/mock"
+require "pry"
 
-options = { adapter: 'odbc' }
-options[:conn_str] = ENV['CONN_STR'] if ENV['CONN_STR']
-options[:dsn]      = ENV['DSN'] if ENV['DSN']
-options[:dsn]      = 'ODBCAdapterPostgreSQLTest' if options.values_at(:conn_str, :dsn).compact.empty?
+options = { adapter: "odbc" }
+options[:conn_str] = ENV["CONN_STR"] if ENV["CONN_STR"]
+options[:dsn]      = ENV["DSN"] if ENV["DSN"]
+options[:dsn]      = "ODBCAdapterPostgreSQLTest" if options.values_at(:conn_str, :dsn).compact.empty?
 
 ActiveRecord::Base.establish_connection(options)
 
@@ -38,12 +38,12 @@ class User < ActiveRecord::Base
 
   create(
     [
-      { first_name: 'Kevin', last_name: 'Deisz', letters: 10 },
-      { first_name: 'Michal', last_name: 'Klos', letters: 10 },
-      { first_name: 'Jason', last_name: 'Dsouza', letters: 11 },
-      { first_name: 'Ash', last_name: 'Hepburn', letters: 10 },
-      { first_name: 'Sharif', last_name: 'Younes', letters: 12 },
-      { first_name: 'Ryan', last_name: 'Brown', letters: 9 }
+      { first_name: "Kevin", last_name: "Deisz", letters: 10 },
+      { first_name: "Michal", last_name: "Klos", letters: 10 },
+      { first_name: "Jason", last_name: "Dsouza", letters: 11 },
+      { first_name: "Ash", last_name: "Hepburn", letters: 10 },
+      { first_name: "Sharif", last_name: "Younes", letters: 12 },
+      { first_name: "Ryan", last_name: "Brown", letters: 9 }
     ]
   )
 end
@@ -54,25 +54,25 @@ end
 
 User.find(1).todos.create(
   [
-    { body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', published: true },
-    { body: 'Praesent ut dolor nec eros euismod hendrerit.' },
-    { body: 'Curabitur lacinia metus eget interdum volutpat.' }
+    { body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.", published: true },
+    { body: "Praesent ut dolor nec eros euismod hendrerit." },
+    { body: "Curabitur lacinia metus eget interdum volutpat." }
   ]
 )
 
 User.find(2).todos.create(
   [
-    { body: 'Nulla sollicitudin venenatis turpis vitae finibus.', published: true },
-    { body: 'Proin consectetur id lacus vel feugiat.', published: true },
-    { body: 'Pellentesque augue orci, aliquet nec ipsum ultrices, cursus blandit metus.' },
-    { body: 'Nulla posuere nisl risus, eget scelerisque leo congue non.' },
-    { body: 'Curabitur eget massa mollis, iaculis risus in, tristique metus.' }
+    { body: "Nulla sollicitudin venenatis turpis vitae finibus.", published: true },
+    { body: "Proin consectetur id lacus vel feugiat.", published: true },
+    { body: "Pellentesque augue orci, aliquet nec ipsum ultrices, cursus blandit metus." },
+    { body: "Nulla posuere nisl risus, eget scelerisque leo congue non." },
+    { body: "Curabitur eget massa mollis, iaculis risus in, tristique metus." }
   ]
 )
 
 User.find(4).todos.create(
   [
-    { body: 'In hac habitasse platea dictumst.', published: true },
-    { body: 'Integer molestie ornare velit, eu interdum felis euismod vitae.' }
+    { body: "In hac habitasse platea dictumst.", published: true },
+    { body: "Integer molestie ornare velit, eu interdum felis euismod vitae." }
   ]
 )
