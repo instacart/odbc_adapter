@@ -20,7 +20,7 @@ module ODBCAdapter
     # Executes +sql+ statement in the context of this connection using
     # +binds+ as the bind substitutes. +name+ is logged along with
     # the executed +sql+ statement.
-    def exec_query(sql, name = 'SQL', binds = [], prepare: false) # rubocop:disable Lint/UnusedMethodArgument
+    def exec_query(sql, name = "SQL", binds = [], prepare: false) # rubocop:disable Lint/UnusedMethodArgument
       log(sql, name) do
         stmt =
           if prepared_statements
@@ -118,13 +118,13 @@ module ODBCAdapter
 
     # Assume column is nullable if nullable == SQL_NULLABLE_UNKNOWN
     def nullability(col_name, is_nullable, nullable)
-      not_nullable = !is_nullable || !nullable.to_s.match('NO').nil?
+      not_nullable = !is_nullable || !nullable.to_s.match("NO").nil?
       result = !(not_nullable || nullable == SQL_NO_NULLS)
 
       # HACK!
       # MySQL native ODBC driver doesn't report nullability accurately.
       # So force nullability of 'id' columns
-      col_name == 'id' ? false : result
+      col_name == "id" ? false : result
     end
 
     def prepared_binds(binds)

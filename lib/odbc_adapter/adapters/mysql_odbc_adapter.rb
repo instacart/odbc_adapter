@@ -3,7 +3,7 @@ module ODBCAdapter
     # Overrides specific to MySQL. Mostly taken from
     # ActiveRecord::ConnectionAdapters::AbstractMysqlAdapter
     class MySQLODBCAdapter < ActiveRecord::ConnectionAdapters::ODBCAdapter
-      PRIMARY_KEY = 'INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY'.freeze
+      PRIMARY_KEY = "INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY".freeze
 
       class BindSubstitution < Arel::Visitors::MySQL
         # BindVisitor was removed in Arel 9 aka Rails 5.2
@@ -35,7 +35,7 @@ module ODBCAdapter
       end
 
       def quoted_true
-        '1'
+        "1"
       end
 
       def unquoted_true
@@ -43,7 +43,7 @@ module ODBCAdapter
       end
 
       def quoted_false
-        '0'
+        "0"
       end
 
       def unquoted_false
@@ -51,10 +51,10 @@ module ODBCAdapter
       end
 
       def disable_referential_integrity(&_block)
-        old = select_value('SELECT @@FOREIGN_KEY_CHECKS')
+        old = select_value("SELECT @@FOREIGN_KEY_CHECKS")
 
         begin
-          update('SET FOREIGN_KEY_CHECKS = 0')
+          update("SET FOREIGN_KEY_CHECKS = 0")
           yield
         ensure
           update("SET FOREIGN_KEY_CHECKS = #{old}")
@@ -86,7 +86,7 @@ module ODBCAdapter
       end
 
       def create_table(name, options = {})
-        super(name, { options: 'ENGINE=InnoDB' }.merge(options))
+        super(name, { options: "ENGINE=InnoDB" }.merge(options))
       end
 
       # Renames a table.
@@ -150,7 +150,7 @@ module ODBCAdapter
       end
 
       def last_inserted_id(_result)
-        select_value('SELECT LAST_INSERT_ID()').to_i
+        select_value("SELECT LAST_INSERT_ID()").to_i
       end
     end
   end

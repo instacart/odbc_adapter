@@ -33,9 +33,9 @@ module ODBCAdapter
         if value.respond_to?(zone_conversion_method)
           value = value.send(zone_conversion_method)
         end
-        value.strftime('%Y-%m-%d %H:%M:%S') # Time, DateTime
+        value.strftime("%Y-%m-%d %H:%M:%S") # Time, DateTime
       else
-        value.strftime('%Y-%m-%d') # Date
+        value.strftime("%Y-%m-%d") # Date
       end
     end
   end

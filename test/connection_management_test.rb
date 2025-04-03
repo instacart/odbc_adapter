@@ -1,4 +1,4 @@
-require 'test_helper'
+require "test_helper"
 
 class ConnectionManagementTest < Minitest::Test
   def test_connection_management

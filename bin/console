@@ -1,12 +1,12 @@
 #!/usr/bin/env ruby
 
-require 'bundler/setup'
-require 'odbc_adapter'
+require "bundler/setup"
+require "odbc_adapter"
 
-options = { adapter: 'odbc' }
-options[:dsn]      = ENV['DSN']      if ENV['DSN']
-options[:conn_str] = ENV['CONN_STR'] if ENV['CONN_STR']
+options = { adapter: "odbc" }
+options[:dsn]      = ENV["DSN"]      if ENV["DSN"]
+options[:conn_str] = ENV["CONN_STR"] if ENV["CONN_STR"]
 ActiveRecord::Base.establish_connection(options) if options.any?
 
-require 'irb'
+require "irb"
 IRB.start

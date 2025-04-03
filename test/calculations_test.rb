@@ -1,4 +1,4 @@
-require 'test_helper'
+require "test_helper"
 
 class CalculationsTest < Minitest::Test
   def test_count
