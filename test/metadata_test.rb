@@ -2,7 +2,9 @@ require "test_helper"
 
 class MetadataTest < Minitest::Test
   def test_data_sources
-    assert_equal %w[ar_internal_metadata todos users], User.connection.data_sources.sort
+    data_sources = %w[ar_internal_metadata todos users]
+    data_sources += %w[schema_migrations] if ActiveRecord.version >= "7.1"
+    assert_equal data_sources.sort, User.connection.data_sources.sort
   end
 
   def test_column_names
