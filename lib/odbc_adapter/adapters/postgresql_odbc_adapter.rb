@@ -42,7 +42,7 @@ module ODBCAdapter
         "#{table_name}_#{pri_key || 'id'}_seq"
       end
 
-      def sql_for_insert(sql, pri_key, binds)
+      def sql_for_insert(sql, pri_key, binds, _returning = nil)
         unless pri_key
           table_ref = extract_table_ref_from_insert_sql(sql)
           pri_key = primary_key(table_ref) if table_ref
