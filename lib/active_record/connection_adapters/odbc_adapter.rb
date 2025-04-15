@@ -104,6 +104,12 @@ module ActiveRecord
         configure_time_options(connection)
         super(connection, logger, config)
         @database_metadata = database_metadata
+
+        # Hack to support 7.1
+        return unless ActiveRecord.version >= "7.1"
+
+        @connection = connection
+        @raw_connection = connection
       end
 
       # Returns the human-readable name of the adapter.
@@ -129,6 +135,15 @@ module ActiveRecord
       # Disconnects from the database if already connected, and establishes a
       # new connection with the database.
       def reconnect!
+        reconnect
+        super
+      end
+      alias reset! reconnect!
+
+      # Use original definition in AbstractAdapter
+      remove_method :reconnect! if ActiveRecord.version >= "7.1"
+
+      def reconnect
         disconnect!
         @connection =
           if @config[:driver]
@@ -137,9 +152,11 @@ module ActiveRecord
             ODBC.connect(@config[:dsn], @config[:username], @config[:password])
           end
         configure_time_options(@connection)
-        super
+
+        return unless ActiveRecord.version >= "7.1"
+
+        @raw_connection = @connection
       end
-      alias reset! reconnect!
 
       # Disconnects from the database if already connected. Otherwise, this
       # method does nothing.
