@@ -58,6 +58,7 @@ module ODBCAdapter
         case value
         when String
           return super unless column.native_type == "bytea"
+
           { value: value, format: 1 }
         else
           super
@@ -67,7 +68,7 @@ module ODBCAdapter
       # Quotes a string, escaping any ' (single quote) and \ (backslash)
       # characters.
       def quote_string(string)
-        string.gsub(/\\/, '\&\&').gsub(/'/, "''")
+        string.gsub("\\", '\&\&').gsub("'", "''")
       end
 
       def disable_referential_integrity
@@ -122,7 +123,8 @@ module ODBCAdapter
       end
 
       def change_column(table_name, column_name, type, options = {})
-        execute("ALTER TABLE #{table_name} ALTER  #{column_name} TYPE #{type_to_sql(type, options[:limit], options[:precision], options[:scale])}")
+        column_type = type_to_sql(type, options[:limit], options[:precision], options[:scale])
+        execute("ALTER TABLE #{table_name} ALTER  #{column_name} TYPE #{column_type}")
         change_column_default(table_name, column_name, options[:default]) if options_include_default?(options)
       end
 

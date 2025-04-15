@@ -4,7 +4,7 @@ module ODBCAdapter
 
     def initialize
       @dbs = {
-        /my.*sql/i  => :MySQL,
+        /my.*sql/i => :MySQL,
         /postgres/i => :PostgreSQL,
         /snowflake/i => :Snowflake
       }
@@ -28,6 +28,7 @@ module ODBCAdapter
 
     def normalize_adapter(adapter)
       return adapter unless adapter.is_a?(Symbol)
+
       require "odbc_adapter/adapters/#{adapter.downcase}_odbc_adapter"
       Adapters.const_get(:"#{adapter}ODBCAdapter")
     end

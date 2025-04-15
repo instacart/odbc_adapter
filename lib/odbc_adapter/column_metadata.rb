@@ -27,6 +27,7 @@ module ODBCAdapter
       GENERICS.each_with_object({}) do |(abstract, candidates), mapped|
         candidates.detect do |candidate|
           next unless grouped[candidate]
+
           mapped[abstract] = native_type_mapping(abstract, grouped[candidate])
         end
       end
@@ -41,6 +42,7 @@ module ODBCAdapter
       # ODBC doesn't provide any info on a DBMS's native syntax for
       # autoincrement columns. So we use a lookup instead.
       return adapter.class::PRIMARY_KEY if abstract == :primary_key
+
       selected_row = rows[0]
 
       # If more than one native type corresponds to the SQL type we're
@@ -69,7 +71,7 @@ module ODBCAdapter
           stmt = adapter.raw_connection.types
           stmt.fetch_all
         ensure
-          stmt.drop unless stmt.nil?
+          stmt&.drop
         end
     end
   end
