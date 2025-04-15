@@ -4,7 +4,7 @@ module ODBCAdapter
     # registry. This allows for minimal support for DBMSs for which we don't
     # have an explicit adapter.
     class NullODBCAdapter < ActiveRecord::ConnectionAdapters::ODBCAdapter
-      class BindSubstitution < Arel::Visitors::ToSql  
+      class BindSubstitution < Arel::Visitors::ToSql
       end
 
       # Using a BindVisitor so that the SQL string gets substituted before it is

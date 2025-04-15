@@ -1,6 +1,7 @@
 inherit_from: .rubocop_todo.yml
 
 AllCops:
+  NewCops: enable
   DisplayCopNames: true
   DisplayStyleGuide: true
   TargetRubyVersion: 3.3
@@ -22,9 +23,6 @@ Metrics/CyclomaticComplexity:
 Metrics/MethodLength:
   Enabled: false
 
-Layout/LineLength:
-  Enabled: false
-
 Metrics/PerceivedComplexity:
   Enabled: false
 
@@ -38,3 +36,12 @@ Style/PercentLiteralDelimiters:
   PreferredDelimiters:
     default: '[]'
     '%r': '{}'
+
+Layout/HashAlignment:
+  EnforcedColonStyle: table
+
+Layout/FirstArrayElementIndentation:
+  EnforcedStyle: consistent
+
+Style/TrailingCommaInArguments:
+  EnforcedStyleForMultiline: comma

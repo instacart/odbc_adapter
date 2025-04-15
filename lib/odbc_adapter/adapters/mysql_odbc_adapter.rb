@@ -31,7 +31,7 @@ module ODBCAdapter
       # Quotes a string, escaping any ' (single quote) and \ (backslash)
       # characters.
       def quote_string(string)
-        string.gsub(/\\/, '\&\&').gsub(/'/, "''")
+        string.gsub("\\", '\&\&').gsub("'", "''")
       end
 
       def quoted_true
@@ -70,10 +70,11 @@ module ODBCAdapter
       #   create_database 'rails_development'
       #   create_database 'rails_development', charset: :big5
       def create_database(name, options = {})
+        charset = options[:charset] || "utf8"
         if options[:collation]
-          execute("CREATE DATABASE `#{name}` DEFAULT CHARACTER SET `#{options[:charset] || 'utf8'}` COLLATE `#{options[:collation]}`")
+          execute("CREATE DATABASE `#{name}` DEFAULT CHARACTER SET `#{charset}` COLLATE `#{options[:collation]}`")
         else
-          execute("CREATE DATABASE `#{name}` DEFAULT CHARACTER SET `#{options[:charset] || 'utf8'}`")
+          execute("CREATE DATABASE `#{name}` DEFAULT CHARACTER SET `#{charset}`")
         end
       end
 
@@ -95,11 +96,10 @@ module ODBCAdapter
       end
 
       def change_column(table_name, column_name, type, options = {})
-        unless options_include_default?(options)
-          options[:default] = column_for(table_name, column_name).default
-        end
+        options[:default] = column_for(table_name, column_name).default unless options_include_default?(options)
 
-        change_column_sql = "ALTER TABLE #{table_name} CHANGE #{column_name} #{column_name} #{type_to_sql(type, options[:limit], options[:precision], options[:scale])}"
+        column_type = type_to_sql(type, options[:limit], options[:precision], options[:scale])
+        change_column_sql = "ALTER TABLE #{table_name} CHANGE #{column_name} #{column_name} #{column_type}"
         add_column_options!(change_column_sql, options)
         execute(change_column_sql)
       end
@@ -114,7 +114,11 @@ module ODBCAdapter
         column = column_for(table_name, column_name)
 
         unless null || default.nil?
-          execute("UPDATE #{quote_table_name(table_name)} SET #{quote_column_name(column_name)}=#{quote(default)} WHERE #{quote_column_name(column_name)} IS NULL")
+          quoted_table_name = quote_table_name(table_name)
+          quoted_column_name = quote_column_name(column_name)
+          execute <<~SQL
+            UPDATE #{quoted_table_name} SET #{quoted_column_name}=#{quote(default)} WHERE #{quoted_column_name} IS NULL
+          SQL
         end
         change_column(table_name, column_name, column.sql_type, null: null)
       end
@@ -128,18 +132,17 @@ module ODBCAdapter
 
       # Skip primary key indexes
       def indexes(table_name, name = nil)
-        super(table_name, name).reject { |i| i.unique && i.name =~ /^PRIMARY$/ }
+        super.reject { |i| i.unique && i.name =~ /^PRIMARY$/ }
       end
 
       # MySQL 5.x doesn't allow DEFAULT NULL for first timestamp column in a
       # table
-      def options_include_default?(options)
-        if options.include?(:default) && options[:default].nil?
-          if options.include?(:column) && options[:column].native_type =~ /timestamp/i
-            options.delete(:default)
-          end
+      def options_include_default?(opts)
+        if opts.key?(:default) && opts[:default].nil? && opts.key?(:column) && opts[:column].native_type =~ /timestamp/i
+          opts.delete(:default)
         end
-        super(options)
+
+        super
       end
 
       protected
