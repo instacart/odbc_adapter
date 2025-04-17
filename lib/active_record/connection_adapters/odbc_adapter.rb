@@ -32,7 +32,7 @@ module ActiveRecord
           end
 
         database_metadata = ::ODBCAdapter::DatabaseMetadata.new(connection)
-        database_metadata.adapter_class.new(connection, logger, config, database_metadata)
+        database_metadata.adapter_class.new(connection, logger, config, database_metadata:)
       end
 
       private
@@ -100,16 +100,21 @@ module ActiveRecord
       # when a connection is first established.
       attr_reader :database_metadata
 
-      def initialize(connection, logger, config, database_metadata)
-        configure_time_options(connection)
-        super(connection, logger, config)
+      def initialize(connection, logger = nil, config = {}, database_metadata: nil)
         @database_metadata = database_metadata
 
-        # Hack to support 7.1
-        return unless ActiveRecord.version >= "7.1"
+        if connection.is_a?(Hash)
+          super(connection)
+        else
+          super(connection, logger, config)
+          configure_time_options(connection)
 
-        @connection = connection
-        @raw_connection = connection
+          # Hack to support 7.1
+          return unless ActiveRecord.version >= "7.1"
+
+          @connection = connection
+          @raw_connection = connection
+        end
       end
 
       # Returns the human-readable name of the adapter.
@@ -145,13 +150,7 @@ module ActiveRecord
 
       def reconnect
         disconnect!
-        @connection =
-          if @config[:driver]
-            ODBC::Database.new.drvconnect(@config[:driver])
-          else
-            ODBC.connect(@config[:dsn], @config[:username], @config[:password])
-          end
-        configure_time_options(@connection)
+        @connection = initialize_connection(@config)
 
         return unless ActiveRecord.version >= "7.1"
 
@@ -233,6 +232,18 @@ module ActiveRecord
       # Ensure ODBC is mapping time-based fields to native ruby objects
       def configure_time_options(connection)
         connection.use_time = true
+      end
+
+      def initialize_connection(config)
+        connection =
+          if config[:driver]
+            ODBC::Database.new.drvconnect(config[:driver])
+          else
+            ODBC.connect(config[:dsn], config[:username], config[:password])
+          end
+
+        configure_time_options(connection)
+        connection
       end
     end
   end
