@@ -19,6 +19,7 @@ jobs:
           - "6.1"
           - "7.0"
           - "7.1"
+          - "7.2"
     continue-on-error: ${{ matrix.ruby == 'head' || matrix.activerecord == 'head' }}
     name: Ruby ${{ matrix.ruby }} / ActiveRecord ${{ matrix.activerecord }}
     services:
