@@ -16,72 +16,6 @@ require "odbc_adapter/registry"
 require "odbc_adapter/version"
 
 module ActiveRecord
-  class Base
-    class << self
-      # Build a new ODBC connection with the given configuration.
-      def odbc_connection(config)
-        config = config.symbolize_keys
-
-        connection, config =
-          if config.key?(:dsn)
-            odbc_dsn_connection(config)
-          elsif config.key?(:conn_str)
-            odbc_conn_str_connection(config)
-          else
-            raise ArgumentError, "No data source name (:dsn) or connection string (:conn_str) specified."
-          end
-
-        database_metadata = ::ODBCAdapter::DatabaseMetadata.new(connection)
-        database_metadata.adapter_class.new(connection, logger, config, database_metadata:)
-      end
-
-      private
-
-      # Connect using a predefined DSN.
-      def odbc_dsn_connection(config)
-        username   = config[:username]&.to_s
-        password   = config[:password]&.to_s
-
-        # If it includes only the DSN + credentials
-        if (config.keys - %i[adapter dsn username password]).empty?
-          connection = ODBC.connect(config[:dsn], username, password)
-          config = config.merge(username: username, password: password)
-        # Support additional overrides, e.g. host: db.example.com
-        else
-          driver_attrs = config.dup
-                               .delete_if { |k, _| %i[adapter username password].include?(k) }
-                               .merge(UID: username, PWD: password)
-
-          driver, connection = obdc_driver_connection(driver_attrs)
-          config = config.merge(driver: driver)
-        end
-
-        [connection, config]
-      end
-
-      # Connect using ODBC connection string
-      # Supports DSN-based or DSN-less connections
-      # e.g. "DSN=virt5;UID=rails;PWD=rails"
-      #      "DRIVER={OpenLink Virtuoso};HOST=carlmbp;UID=rails;PWD=rails"
-      def odbc_conn_str_connection(config)
-        driver_attrs = config[:conn_str].split(";").map { |option| option.split("=", 2) }.to_h
-        driver, connection = obdc_driver_connection(driver_attrs)
-
-        [connection, config.merge(driver: driver)]
-      end
-
-      def obdc_driver_connection(driver_attrs)
-        driver = ODBC::Driver.new
-        driver.name = "odbc"
-        driver.attrs = driver_attrs.stringify_keys
-
-        connection = ODBC::Database.new.drvconnect(driver)
-
-        [driver, connection]
-      end
-    end
-  end
-
   module ConnectionAdapters
     class ODBCAdapter < AbstractAdapter
       include ::ODBCAdapter::DatabaseLimits
@@ -100,21 +34,30 @@ module ActiveRecord
       # when a connection is first established.
       attr_reader :database_metadata
 
-      def initialize(connection, logger = nil, config = {}, database_metadata: nil)
-        @database_metadata = database_metadata
-
+      def initialize(connection, logger = nil, config = {})
         if connection.is_a?(Hash)
-          super(connection)
+          config = connection.symbolize_keys
+
+          connection, config =
+            if config.key?(:dsn)
+              odbc_dsn_connection(config)
+            elsif config.key?(:conn_str)
+              odbc_conn_str_connection(config)
+            else
+              raise ArgumentError, "No data source name (:dsn) or connection string (:conn_str) specified."
+            end
+
+          @database_metadata = ::ODBCAdapter::DatabaseMetadata.new(connection)
+
+          super(connection, nil, config)
         else
-          super(connection, logger, config)
-          configure_time_options(connection)
-
-          # Hack to support 7.1
-          return unless ActiveRecord.version >= "7.1"
-
-          @connection = connection
-          @raw_connection = connection
+          binding.pry
+          # super(connection, logger, config)
         end
+
+        configure_time_options(connection)
+        @connection = connection
+        @raw_connection = connection
       end
 
       # Returns the human-readable name of the adapter.
@@ -152,7 +95,7 @@ module ActiveRecord
         disconnect!
         @connection = initialize_connection(@config)
 
-        return unless ActiveRecord.version >= "7.1"
+        return unless activerecord.version >= "7.1"
 
         @raw_connection = @connection
       end
@@ -244,6 +187,49 @@ module ActiveRecord
 
         configure_time_options(connection)
         connection
+      end
+
+      # Connect using a predefined DSN.
+      def odbc_dsn_connection(config)
+        username   = config[:username]&.to_s
+        password   = config[:password]&.to_s
+
+        # If it includes only the DSN + credentials
+        if (config.keys - %i[adapter dsn username password]).empty?
+          connection = ODBC.connect(config[:dsn], username, password)
+          config = config.merge(username: username, password: password)
+        # Support additional overrides, e.g. host: db.example.com
+        else
+          driver_attrs = config.dup
+                               .delete_if { |k, _| %i[adapter username password].include?(k) }
+                               .merge(UID: username, PWD: password)
+
+          driver, connection = obdc_driver_connection(driver_attrs)
+          config = config.merge(driver: driver)
+        end
+
+        [connection, config]
+      end
+
+      # Connect using ODBC connection string
+      # Supports DSN-based or DSN-less connections
+      # e.g. "DSN=virt5;UID=rails;PWD=rails"
+      #      "DRIVER={OpenLink Virtuoso};HOST=carlmbp;UID=rails;PWD=rails"
+      def odbc_conn_str_connection(config)
+        driver_attrs = config[:conn_str].split(";").map { |option| option.split("=", 2) }.to_h
+        driver, connection = obdc_driver_connection(driver_attrs)
+
+        [connection, config.merge(driver: driver)]
+      end
+
+      def obdc_driver_connection(driver_attrs)
+        driver = ODBC::Driver.new
+        driver.name = "odbc"
+        driver.attrs = driver_attrs.stringify_keys
+
+        connection = ODBC::Database.new.drvconnect(driver)
+
+        [driver, connection]
       end
     end
   end

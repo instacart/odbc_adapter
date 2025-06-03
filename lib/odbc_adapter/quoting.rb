@@ -3,7 +3,7 @@ module ODBCAdapter
     extend ActiveSupport::Concern
     module ClassMethods
       # Returns a quoted form of the column name.
-      def quote_column_name(name)
+      def quote_column_name(name, database_metadata)
         name = name.to_s
         quote_char = database_metadata.identifier_quote_char.to_s.strip
 
@@ -19,6 +19,14 @@ module ODBCAdapter
 
         "#{quote_char.chr}#{name}#{quote_char.chr}"
       end
+    end
+
+    def quote_column_name(column_name)
+      self.class.quote_column_name(column_name, database_metadata)
+    end
+
+    def quote_table_name(table_name)
+      self.class.quote_column_name(table_name, database_metadata)
     end
 
     # Quotes a string, escaping any ' (single quote) characters.

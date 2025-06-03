@@ -25,7 +25,7 @@ module ODBCAdapter
       grouped = reported_types.group_by { |row| row[1] }
 
       GENERICS.each_with_object({}) do |(abstract, candidates), mapped|
-        candidates.detect do |candidate|
+        candidates.find do |candidate|
           next unless grouped[candidate]
 
           mapped[abstract] = native_type_mapping(abstract, grouped[candidate])
@@ -41,6 +41,7 @@ module ODBCAdapter
       # The appropriate SQL for :primary_key is hard to derive as
       # ODBC doesn't provide any info on a DBMS's native syntax for
       # autoincrement columns. So we use a lookup instead.
+      binding.pry
       return adapter.class::PRIMARY_KEY if abstract == :primary_key
 
       selected_row = rows[0]
