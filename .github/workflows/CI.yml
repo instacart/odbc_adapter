@@ -15,9 +15,12 @@ jobs:
         ruby:
           - "3.3"
           - "3.4"
+          - "4.0"
         activerecord:
           - "7.2"
-    continue-on-error: ${{ matrix.ruby == 'head' || matrix.activerecord == 'head' }}
+          - "8.0"
+          - "8.1"
+    continue-on-error: ${{ matrix.ruby == 'head' || matrix.activerecord == 'head' || matrix.ruby == '4.0' }}
     name: Ruby ${{ matrix.ruby }} / ActiveRecord ${{ matrix.activerecord }}
     services:
       postgres:
