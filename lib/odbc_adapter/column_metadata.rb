@@ -41,7 +41,6 @@ module ODBCAdapter
       # The appropriate SQL for :primary_key is hard to derive as
       # ODBC doesn't provide any info on a DBMS's native syntax for
       # autoincrement columns. So we use a lookup instead.
-      binding.pry
       return adapter.class::PRIMARY_KEY if abstract == :primary_key
 
       selected_row = rows[0]

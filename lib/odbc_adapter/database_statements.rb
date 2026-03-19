@@ -122,9 +122,8 @@ module ODBCAdapter
       not_nullable = !is_nullable || !nullable.to_s.match("NO").nil?
       result = !(not_nullable || nullable == SQL_NO_NULLS)
 
-      # HACK!
-      # MySQL native ODBC driver doesn't report nullability accurately.
-      # So force nullability of 'id' columns
+      # Force 'id' columns to be non-nullable as some ODBC drivers don't
+      # report nullability accurately
       col_name == "id" ? false : result
     end
 
