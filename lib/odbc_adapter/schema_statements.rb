@@ -88,14 +88,13 @@ module ODBCAdapter
           args[:precision] = col_limit
         end
         sql_type_metadata = ActiveRecord::ConnectionAdapters::SqlTypeMetadata.new(**args)
+        cast_type = lookup_cast_type(sql_type_metadata.sql_type)
 
-        cols << new_column(
-          format_case(col_name),
-          col_default,
-          sql_type_metadata,
-          col_nullable,
-          native_type: col_native_type,
-        )
+        col_args = [format_case(col_name)]
+        col_args << cast_type if rails_81_or_later?
+        col_args.push(col_default, sql_type_metadata, col_nullable)
+
+        cols << new_column(*col_args, native_type: col_native_type)
       end
     end
 
@@ -137,6 +136,12 @@ module ODBCAdapter
 
     def current_database
       database_metadata.database_name.strip
+    end
+
+    private
+
+    def rails_81_or_later?
+      ActiveRecord.version >= Gem::Version.new("8.1")
     end
   end
 end
