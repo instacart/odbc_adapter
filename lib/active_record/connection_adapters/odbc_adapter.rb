@@ -40,8 +40,10 @@ module ActiveRecord
             connection, config = create_odbc_connection(config)
             database_metadata = ::ODBCAdapter::DatabaseMetadata.new(connection)
             database_metadata.adapter_class.new(connection, nil, config, database_metadata: database_metadata)
+          elsif config_or_connection.nil? && args.empty? && kwargs.empty?
+            super()
           else
-            super
+            super(config_or_connection, *args, **kwargs)
           end
         end
 
