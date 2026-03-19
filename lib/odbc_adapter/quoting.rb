@@ -26,7 +26,7 @@ module ODBCAdapter
     end
 
     def quote_table_name(table_name)
-      self.class.quote_column_name(table_name, database_metadata)
+      table_name.to_s.split(".").map { |part| self.class.quote_column_name(part, database_metadata) }.join(".")
     end
 
     # Quotes a string, escaping any ' (single quote) characters.

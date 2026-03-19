@@ -135,12 +135,10 @@ module ActiveRecord
       # Disconnects from the database if already connected. Otherwise, this
       # method does nothing.
       def disconnect!
-        @lock.synchronize do
-          super
-          @connection&.disconnect if @connection&.connected?
-          @connection = nil
-          @raw_connection = nil
-        end
+        super
+        @connection&.disconnect if @connection&.connected?
+        @connection = nil
+        @raw_connection = nil
       end
 
       # Build a new column object from the given options. Effectively the same
