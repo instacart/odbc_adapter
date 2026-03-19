@@ -43,7 +43,7 @@ module ActiveRecord
           elsif config_or_connection.nil? && args.empty? && kwargs.empty?
             super()
           else
-            super(config_or_connection, *args, **kwargs)
+            super(config_or_connection, *args, **kwargs) # rubocop:disable Style/SuperArguments
           end
         end
 
