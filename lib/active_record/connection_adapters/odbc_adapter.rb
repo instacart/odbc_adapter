@@ -33,7 +33,7 @@ module ActiveRecord
       attr_reader :database_metadata
 
       class << self
-        def new(config_or_connection, *args, **kwargs)
+        def new(config_or_connection = nil, *args, **kwargs)
           if config_or_connection.is_a?(Hash)
             config = config_or_connection.symbolize_keys
 
