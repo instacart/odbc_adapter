@@ -74,7 +74,7 @@ module ActiveRecord
                                  .delete_if { |k, _| %i[adapter username password].include?(k) }
                                  .merge(UID: username, PWD: password)
 
-            driver, connection = obdc_driver_connection(driver_attrs)
+            driver, connection = odbc_driver_connection(driver_attrs)
             config = config.merge(driver: driver)
           end
 
@@ -87,12 +87,12 @@ module ActiveRecord
         #      "DRIVER={OpenLink Virtuoso};HOST=carlmbp;UID=rails;PWD=rails"
         def odbc_conn_str_connection(config)
           driver_attrs = config[:conn_str].split(";").map { |option| option.split("=", 2) }.to_h
-          driver, connection = obdc_driver_connection(driver_attrs)
+          driver, connection = odbc_driver_connection(driver_attrs)
 
           [connection, config.merge(driver: driver)]
         end
 
-        def obdc_driver_connection(driver_attrs)
+        def odbc_driver_connection(driver_attrs)
           driver = ODBC::Driver.new
           driver.name = "odbc"
           driver.attrs = driver_attrs.stringify_keys
@@ -135,10 +135,12 @@ module ActiveRecord
       # Disconnects from the database if already connected. Otherwise, this
       # method does nothing.
       def disconnect!
-        super
-        @connection&.disconnect if @connection&.connected?
-        @connection = nil
-        @raw_connection = nil
+        @lock.synchronize do
+          super
+          @connection&.disconnect if @connection&.connected?
+          @connection = nil
+          @raw_connection = nil
+        end
       end
 
       # Build a new column object from the given options. Effectively the same

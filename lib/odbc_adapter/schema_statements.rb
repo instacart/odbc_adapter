@@ -141,7 +141,8 @@ module ODBCAdapter
     private
 
     def rails_81_or_later?
-      ActiveRecord.version >= Gem::Version.new("8.1")
+      @rails_81_or_later = ActiveRecord.version >= Gem::Version.new("8.1") unless defined?(@rails_81_or_later)
+      @rails_81_or_later
     end
   end
 end
