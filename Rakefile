@@ -1,6 +1,6 @@
 require "bundler/gem_tasks"
 
-task default: %i[test]
+task default: %i[spec]
 
 desc "Run rubocop"
 task :rubocop do
@@ -12,13 +12,9 @@ task :rubocop do
   end
 end
 
-desc "Run tests"
-task :test do
-  require "rake/testtask"
+desc "Run specs"
+task :spec do
+  require "rspec/core/rake_task"
 
-  Rake::TestTask.new do |task|
-    task.libs << "test"
-    task.libs << "lib"
-    task.test_files = FileList["test/**/*_test.rb"]
-  end
+  RSpec::Core::RakeTask.new
 end

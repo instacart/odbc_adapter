@@ -60,7 +60,7 @@ jobs:
           sudo cat /usr/share/psqlodbc/odbcinst.ini.template
           sudo odbcinst -i -d -f /usr/share/psqlodbc/odbcinst.ini.template
       - run: |
-          bundle exec rake test
+          bundle exec rake spec
   RuboCop:
     runs-on: ubuntu-latest
     steps:

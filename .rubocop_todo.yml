@@ -46,7 +46,6 @@ Naming/BlockForwarding:
   Exclude:
     - 'lib/odbc_adapter/adapters/mysql_odbc_adapter.rb'
     - 'lib/odbc_adapter/registry.rb'
-    - 'test/crud_test.rb'
 
 # Offense count: 4
 # This cop supports safe autocorrection (--autocorrect).
@@ -82,5 +81,4 @@ Style/MapToHash:
 # This cop supports unsafe autocorrection (--autocorrect-all).
 # Configuration parameters: AutoCorrect, AllowComments.
 Style/RedundantInitialize:
-  Exclude:
-    - 'test/registry_test.rb'
+  Exclude: []
