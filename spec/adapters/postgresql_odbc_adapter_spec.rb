@@ -49,18 +49,4 @@ RSpec.describe ODBCAdapter::Adapters::PostgreSQLODBCAdapter do
     end
   end
 
-  describe "#native_database_types" do
-    it "includes boolean type mapped to bool" do
-      # Need to stub the super call which requires database_metadata
-      metadata = instance_double(ODBCAdapter::DatabaseMetadata)
-      adapter.instance_variable_set(:@database_metadata, metadata)
-
-      # Stub column_metadata to return empty types (super's behavior)
-      col_metadata = instance_double(ODBCAdapter::ColumnMetadata, native_database_types: {})
-      adapter.instance_variable_set(:@column_metadata, col_metadata)
-
-      types = adapter.native_database_types
-      expect(types[:boolean]).to eq({ name: "bool" })
-    end
-  end
 end

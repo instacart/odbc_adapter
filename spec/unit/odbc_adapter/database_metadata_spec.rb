@@ -26,7 +26,6 @@ RSpec.describe ODBCAdapter::DatabaseMetadata do
       when :SQL_MAX_TABLE_NAME_LEN then 64
       when :SQL_USER_NAME          then "test_user"
       when :SQL_DATABASE_NAME      then "test_db"
-      else nil
       end
     end
   end
