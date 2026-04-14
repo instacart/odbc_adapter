@@ -5,7 +5,7 @@ RSpec.describe "Schema statements" do
 
   describe "#indexes" do
     after do
-      connection.remove_index(:users, name: "index_users_on_first_name") rescue nil # rubocop:disable Style/RescueModifier
+      connection.execute('DROP INDEX IF EXISTS "index_users_on_first_name"')
     end
 
     it "returns indexes for a table" do
