@@ -15,7 +15,7 @@ RSpec.describe "ODBC connection string parsing" do
     it "parses the connection string correctly" do
       conn_str = "Foo=Bar;Foo2=Something=with=equals"
 
-      ActiveRecord::ConnectionAdapters::ODBCAdapter.__send__(:odbc_conn_str_connection, conn_str: conn_str)
+      ActiveRecord::Base.__send__(:odbc_conn_str_connection, conn_str: conn_str)
 
       expect(driver).to have_received(:name=).with("odbc")
       expect(driver).to have_received(:attrs=).with({ "Foo" => "Bar", "Foo2" => "Something=with=equals" })
@@ -27,7 +27,7 @@ RSpec.describe "ODBC connection string parsing" do
     it "parses the connection string correctly" do
       conn_str = "Foo=Bar;Foo2=Something without equals"
 
-      ActiveRecord::ConnectionAdapters::ODBCAdapter.__send__(:odbc_conn_str_connection, conn_str: conn_str)
+      ActiveRecord::Base.__send__(:odbc_conn_str_connection, conn_str: conn_str)
 
       expect(driver).to have_received(:name=).with("odbc")
       expect(driver).to have_received(:attrs=).with({ "Foo" => "Bar", "Foo2" => "Something without equals" })
