@@ -48,5 +48,4 @@ RSpec.describe ODBCAdapter::Adapters::PostgreSQLODBCAdapter do
       expect(adapter.table_filtered?("public", "SYSTEM TABLE")).to be false
     end
   end
-
 end
