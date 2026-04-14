@@ -3,8 +3,12 @@ module ODBCAdapter
     extend ActiveSupport::Concern
     module ClassMethods
       # Returns a quoted form of the column name.
-      def quote_column_name(name, database_metadata)
+      # Called by Rails at the class level with 1 arg (e.g. SchemaCreation)
+      # and by instances with 2 args (passing database_metadata for ODBC quoting).
+      def quote_column_name(name, database_metadata = nil)
         name = name.to_s
+        return name unless database_metadata
+
         quote_char = database_metadata.identifier_quote_char.to_s.strip
 
         return name if quote_char.empty?
@@ -25,8 +29,10 @@ module ODBCAdapter
       self.class.quote_column_name(column_name, database_metadata)
     end
 
+    # Uses instance-level quote_column_name so subclass overrides
+    # (e.g. Snowflake's unquoted identifiers) are respected.
     def quote_table_name(table_name)
-      table_name.to_s.split(".").map { |part| self.class.quote_column_name(part, database_metadata) }.join(".")
+      table_name.to_s.split(".").map { |part| quote_column_name(part) }.join(".")
     end
 
     # Quotes a string, escaping any ' (single quote) characters.
