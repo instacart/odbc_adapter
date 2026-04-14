@@ -64,9 +64,39 @@ RSpec.describe ODBCAdapter::Adapters::PostgreSQLODBCAdapter do
     end
   end
 
+  describe "#adapter_name" do
+    it "returns ODBC" do
+      expect(connection.adapter_name).to eq("ODBC")
+    end
+  end
+
+  describe "#supports_migrations?" do
+    it "returns true" do
+      expect(connection.supports_migrations?).to be true
+    end
+  end
+
   describe "#current_database" do
     it "returns the database name" do
       expect(connection.current_database).to eq("odbc_test")
+    end
+  end
+
+  describe "#default_sequence_name" do
+    it "returns the sequence name for a table" do
+      expect(connection.default_sequence_name("users", "id")).to eq("users_id_seq")
+    end
+  end
+
+  describe "#distinct" do
+    it "returns DISTINCT columns when no orders given" do
+      expect(connection.distinct("posts.id", [])).to eq("DISTINCT posts.id")
+    end
+
+    it "includes order columns as aliases when orders given" do
+      result = connection.distinct("posts.id", ["posts.created_at desc"])
+      expect(result).to include("DISTINCT posts.id")
+      expect(result).to include("alias_0")
     end
   end
 end

@@ -14,4 +14,10 @@ RSpec.describe ODBCAdapter::Adapters::NullODBCAdapter do
       expect(adapter.supports_migrations?).to be false
     end
   end
+
+  describe "#arel_visitor" do
+    it "returns a BindSubstitution visitor" do
+      expect(adapter.arel_visitor).to be_a(described_class::BindSubstitution)
+    end
+  end
 end
