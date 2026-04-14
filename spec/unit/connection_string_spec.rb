@@ -1,7 +1,7 @@
 RSpec.describe "ODBC connection string parsing" do
-  let(:driver) { instance_double(ODBC::Driver) }
-  let(:database) { instance_double(ODBC::Database) }
-  let(:connection) { instance_double(ODBC::Connection) }
+  let(:driver) { double("ODBC::Driver") }
+  let(:database) { double("ODBC::Database") }
+  let(:connection) { double("ODBC::Connection") }
 
   before do
     allow(ODBC::Driver).to receive(:new).and_return(driver)
