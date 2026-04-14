@@ -21,10 +21,10 @@ Gem::Specification.new do |spec|
 
   spec.required_ruby_version = ">= 3.3.0"
 
-  spec.add_dependency "activerecord", ">= 6.1", "< 8"
+  spec.add_dependency "activerecord", ">= 7.0", "< 8"
   spec.add_dependency "ruby-odbc", ">= 0.9", "< 2"
 
-  spec.add_development_dependency "minitest",  "~> 5.10"
   spec.add_development_dependency "pry",       "~> 0.11"
+  spec.add_development_dependency "rspec",     "~> 3.13"
   spec.add_development_dependency "simplecov", "~> 0.14"
 end

@@ -7,12 +7,17 @@ AllCops:
   TargetRubyVersion: 3.3
   Exclude:
   - 'vendor/**/*'
+  - '.rspec'
 
 Lint/AmbiguousBlockAssociation:
   Enabled: false
 
 Metrics/AbcSize:
   Enabled: false
+
+Metrics/BlockLength:
+  Exclude:
+  - 'spec/**/*'
 
 Metrics/ClassLength:
   Enabled: false
