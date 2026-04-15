@@ -2,7 +2,7 @@ require "integration_helper"
 
 RSpec.describe "ODBC connection string (live)" do
   def conn_str_connection(conn_str)
-    ActiveRecord::Base.__send__(:odbc_conn_str_connection, conn_str: conn_str)
+    ActiveRecord::ConnectionAdapters::ODBCAdapter.__send__(:odbc_conn_str_connection, conn_str: conn_str)
   end
 
   def base_conn_str
