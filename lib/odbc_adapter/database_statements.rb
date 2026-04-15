@@ -7,12 +7,14 @@ module ODBCAdapter
 
     # Executes the SQL statement in the context of this connection.
     # Returns the number of rows affected.
-    def execute(sql, name = nil, binds = [])
+    def execute(sql, name = nil, binds = [], **)
       log(sql, name) do
-        if prepared_statements
-          @connection.do(sql, *prepared_binds(binds))
-        else
-          @connection.do(sql)
+        with_raw_connection do |conn|
+          if prepared_statements
+            conn.do(sql, *prepared_binds(binds))
+          else
+            conn.do(sql)
+          end
         end
       end
     end
@@ -20,22 +22,24 @@ module ODBCAdapter
     # Executes +sql+ statement in the context of this connection using
     # +binds+ as the bind substitutes. +name+ is logged along with
     # the executed +sql+ statement.
-    def exec_query(sql, name = "SQL", binds = [], prepare: false) # rubocop:disable Lint/UnusedMethodArgument
+    def exec_query(sql, name = "SQL", binds = [], prepare: false, **) # rubocop:disable Lint/UnusedMethodArgument
       log(sql, name) do
-        stmt =
-          if prepared_statements
-            @connection.run(sql, *prepared_binds(binds))
-          else
-            @connection.run(sql)
-          end
+        with_raw_connection do |conn|
+          stmt =
+            if prepared_statements
+              conn.run(sql, *prepared_binds(binds))
+            else
+              conn.run(sql)
+            end
 
-        columns = stmt.columns
-        values  = stmt.to_a
-        stmt.drop
+          columns = stmt.columns
+          values  = stmt.to_a
+          stmt.drop
 
-        values = dbms_type_cast(columns.values, values)
-        column_names = columns.keys.map { |key| format_case(key) }
-        ActiveRecord::Result.new(column_names, values)
+          values = dbms_type_cast(columns.values, values)
+          column_names = columns.keys.map { |key| format_case(key) }
+          ActiveRecord::Result.new(column_names, values)
+        end
       end
     end
     alias internal_exec_query exec_query
@@ -122,9 +126,8 @@ module ODBCAdapter
       not_nullable = !is_nullable || !nullable.to_s.match("NO").nil?
       result = !(not_nullable || nullable == SQL_NO_NULLS)
 
-      # HACK!
-      # MySQL native ODBC driver doesn't report nullability accurately.
-      # So force nullability of 'id' columns
+      # Force 'id' columns to be non-nullable as some ODBC drivers don't
+      # report nullability accurately
       col_name == "id" ? false : result
     end
 

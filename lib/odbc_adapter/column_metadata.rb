@@ -25,7 +25,7 @@ module ODBCAdapter
       grouped = reported_types.group_by { |row| row[1] }
 
       GENERICS.each_with_object({}) do |(abstract, candidates), mapped|
-        candidates.detect do |candidate|
+        candidates.find do |candidate|
           next unless grouped[candidate]
 
           mapped[abstract] = native_type_mapping(abstract, grouped[candidate])

@@ -15,9 +15,12 @@ jobs:
         ruby:
           - "3.3"
           - "3.4"
+          - "4.0"
         activerecord:
-          - "7.0"
           - "7.1"
+          - "7.2"
+          - "8.0"
+          - "8.1"
     continue-on-error: ${{ matrix.ruby == 'head' || matrix.activerecord == 'head' }}
     name: Ruby ${{ matrix.ruby }} / ActiveRecord ${{ matrix.activerecord }}
     services:

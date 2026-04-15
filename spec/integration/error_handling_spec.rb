@@ -5,8 +5,6 @@ RSpec.describe "Error handling" do
 
   describe "duplicate key violation" do
     it "raises ActiveRecord::RecordNotUnique" do
-      skip "Exception translation broken on AR >= 7.1" if ActiveRecord.version >= "7.1"
-
       user = User.first
 
       expect do
