@@ -9,10 +9,12 @@ module ODBCAdapter
     # Returns the number of rows affected.
     def execute(sql, name = nil, binds = [], **)
       log(sql, name) do
-        if prepared_statements
-          @connection.do(sql, *prepared_binds(binds))
-        else
-          @connection.do(sql)
+        with_raw_connection do |conn|
+          if prepared_statements
+            conn.do(sql, *prepared_binds(binds))
+          else
+            conn.do(sql)
+          end
         end
       end
     end
@@ -22,20 +24,22 @@ module ODBCAdapter
     # the executed +sql+ statement.
     def exec_query(sql, name = "SQL", binds = [], prepare: false, **) # rubocop:disable Lint/UnusedMethodArgument
       log(sql, name) do
-        stmt =
-          if prepared_statements
-            @connection.run(sql, *prepared_binds(binds))
-          else
-            @connection.run(sql)
-          end
+        with_raw_connection do |conn|
+          stmt =
+            if prepared_statements
+              conn.run(sql, *prepared_binds(binds))
+            else
+              conn.run(sql)
+            end
 
-        columns = stmt.columns
-        values  = stmt.to_a
-        stmt.drop
+          columns = stmt.columns
+          values  = stmt.to_a
+          stmt.drop
 
-        values = dbms_type_cast(columns.values, values)
-        column_names = columns.keys.map { |key| format_case(key) }
-        ActiveRecord::Result.new(column_names, values)
+          values = dbms_type_cast(columns.values, values)
+          column_names = columns.keys.map { |key| format_case(key) }
+          ActiveRecord::Result.new(column_names, values)
+        end
       end
     end
     alias internal_exec_query exec_query
